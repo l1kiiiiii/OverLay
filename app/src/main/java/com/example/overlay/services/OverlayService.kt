@@ -1,4 +1,4 @@
-package com.example.overlay
+package com.example.overlay.services
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -20,8 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.NotificationCompat
+import com.example.overlay.OverlayUI
 import kotlin.jvm.java
-import androidx.compose.ui.geometry.Offset
+import com.example.overlay.R
 
 @Suppress("DEPRECATION")
 class OverlayService : Service() {

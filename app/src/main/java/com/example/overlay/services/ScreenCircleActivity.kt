@@ -1,7 +1,11 @@
-package com.example.overlay
+package com.example.overlay.services
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color as AndroidGraphicsColor
 import android.graphics.drawable.ColorDrawable
+import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -19,9 +23,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlin.math.hypot
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
 class ScreenCircleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,8 +56,7 @@ class ScreenCircleActivity : ComponentActivity() {
         setContent {
             Box {
                 CircleDrawScreen(onCircleDrawn = { center: Offset, radius: Float ->
-                    // TODO: Implement screenshot + OCR here
-                })
+                } as (Offset, Float, Bitmap?) -> Unit)
             }
         }
     }
@@ -57,10 +64,11 @@ class ScreenCircleActivity : ComponentActivity() {
 
 
 @Composable
-fun CircleDrawScreen(onCircleDrawn: (Offset, Float) -> Unit) {
+fun CircleDrawScreen(onCircleDrawn: (Offset, Float, Bitmap?) -> Unit) {
     var center by remember { mutableStateOf(Offset.Zero) }
     var radius by remember { mutableStateOf(0f) }
     var isDrawing by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Canvas(modifier = Modifier
         .fillMaxSize()
@@ -79,7 +87,10 @@ fun CircleDrawScreen(onCircleDrawn: (Offset, Float) -> Unit) {
                 },
                 onDragEnd = {
                     isDrawing = false
-                    onCircleDrawn(center, radius)
+                    // Start screenshot capture
+                    captureScreenshot(context, center, radius) { bitmap ->
+                        onCircleDrawn(center, radius, bitmap)
+                    }
                 }
             )
         }) {
@@ -92,4 +103,12 @@ fun CircleDrawScreen(onCircleDrawn: (Offset, Float) -> Unit) {
             )
         }
     }
+}
+@SuppressLint("ServiceCast")
+private fun captureScreenshot(context: Context, center: Offset, radius: Float, callback: (Bitmap?) -> Unit) {
+    val mediaProjectionManager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+    val intent = mediaProjectionManager.createScreenCaptureIntent()
+    // TODO: Handle permission request and capture logic (requires MediaProjection API)
+    // Placeholder: You need to implement the full screenshot capture flow
+    callback(null) // Replace with actual bitmap after implementation
 }
