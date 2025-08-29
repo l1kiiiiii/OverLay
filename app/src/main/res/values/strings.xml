@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">OverLay</string>
+    <string name="accessibility_service_description" />
 </resources>
