@@ -19,12 +19,16 @@ import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun OverlayUI() {
+
+fun OverlayUI(
+    onAskAI: () -> Unit,
+    onClose: () -> Unit
+) {
     Surface(
         modifier = Modifier
             .size(300.dp, 200.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF1A1A2E)), // Dark background color approximating the image
+            .background(Color(0xFF1A1A2E)),
         color = Color.Transparent
     ) {
         Column(
@@ -34,16 +38,14 @@ fun OverlayUI() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Placeholder for star icon (replace with actual Icon or Image asset)
             Icon(
-                imageVector = Icons.Default.Star, // Replace with your star icon asset
+                imageVector = Icons.Default.Star,
                 contentDescription = "AI Assistant Icon",
-                tint = Color(0xFF4E79E6), // Blue color for the star
+                tint = Color(0xFF4E79E6),
                 modifier = Modifier.size(40.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Title
             Text(
                 text = "AI Assistant",
                 color = Color.White,
@@ -52,24 +54,22 @@ fun OverlayUI() {
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            // Subtitle
             Text(
                 text = "Get instant help and creative ideas.",
-                color = Color(0xFFB0B0C0), // Light gray for subtitle
+                color = Color(0xFFB0B0C0),
                 fontSize = 14.sp,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // Ask AI Button
             Button(
-                onClick = { /* Add AI interaction logic here */ },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4E79E6)), // Blue button
+                onClick = onAskAI,   // ✅ trigger callback
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4E79E6)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Lightbulb, // Replace with appropriate icon
+                    imageVector = Icons.Default.Lightbulb,
                     contentDescription = "Ask AI Icon",
                     tint = Color.White,
                     modifier = Modifier.size(20.dp)
@@ -77,11 +77,11 @@ fun OverlayUI() {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Ask AI", color = Color.White, fontSize = 16.sp)
             }
+
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Close Button
             Button(
-                onClick = { /* Add close logic here */ },
+                onClick = onClose,
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,13 +89,8 @@ fun OverlayUI() {
             ) {
                 Text("Close", color = Color.White, fontSize = 16.sp)
             }
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
-@Preview
-@Composable
-fun OverlayUIPreview() {
-    OverlayUI()
-}
+

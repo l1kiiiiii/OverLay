@@ -16,7 +16,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             OverLayTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    OverlayUI()
+                    OverlayUI(
+                        onAskAI = { /* Handle Ask AI button click */ },
+                        onClose = { /* Handle Close button click */ }
+                    )
                 }
             }
         }
