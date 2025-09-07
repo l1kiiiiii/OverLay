@@ -2,4 +2,19 @@
 <resources>
 
     <style name="Theme.OverLay" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Transparent theme for ScreenCircleActivity -->
+    <style name="Theme.OverLay.Transparent" parent="Theme.OverLay">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <!-- <style name="Theme.OverLay" parent="Theme.Material3.DayNight.NoActionBar">
+    </style> -->
+
 </resources>

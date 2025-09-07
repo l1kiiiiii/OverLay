@@ -75,14 +75,15 @@ class ScreenCircleActivity : ComponentActivity() {
                     }
                 }
                 startService(intent)
-                finish()
+                // DO NOT FINISH HERE - Wait for Gemini result to be shown
+                // finish()
             } else {
                 Log.w(TAG, "Failed to capture or crop screen")
-                finish()
+                finish() // Finish if capture failed
             }
         } else {
             Log.w(TAG, "MediaProjection permission denied or data is null")
-            finish()
+            finish() // Finish if permission denied
         }
     }
 
@@ -96,7 +97,7 @@ class ScreenCircleActivity : ComponentActivity() {
 
     private val geminiReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.d(TAG, "geminiReceiver.onReceive called")
+            Log.d(TAG, "geminiReceiver.onReceive called in ScreenCircleActivity")
             intent?.getStringExtra("result")?.let { result ->
                 geminiResult = result
                 showDialog = true
@@ -165,8 +166,9 @@ class ScreenCircleActivity : ComponentActivity() {
                     GeminiResultDialog(
                         result = geminiResult,
                         onDismiss = { 
-                            Log.d(TAG, "GeminiResultDialog onDismiss")
+                            Log.d(TAG, "GeminiResultDialog onDismiss - finishing activity")
                             showDialog = false 
+                            finish() // Finish activity when dialog is dismissed
                         }
                     )
                 }
@@ -179,7 +181,6 @@ class ScreenCircleActivity : ComponentActivity() {
         Log.d(TAG, "onDestroy called")
         super.onDestroy()
         unregisterReceiver(geminiReceiver)
-        // stopService(Intent(this, OverlayService::class.java)) // Service is stopped by itself or when app closes
         Log.d(TAG, "Activity destroyed")
     }
 }
@@ -207,7 +208,6 @@ fun FreehandDrawScreen(onLoopDrawn: (Path, List<Offset>) -> Unit) {
                     onDrag = { change, _ ->
                         if (isDrawing) {
                             val newPoint = change.position
-                            // Log.d(TAG, "Drag to $newPoint") // Can be too verbose
                             path.lineTo(newPoint.x, newPoint.y)
                             points.add(newPoint)
                         }
@@ -218,8 +218,8 @@ fun FreehandDrawScreen(onLoopDrawn: (Path, List<Offset>) -> Unit) {
                         if (points.size > 1) {
                             val startPoint = points.first()
                             path.lineTo(startPoint.x, startPoint.y) // Close the path
-                            points.add(startPoint) // Add closing point for consistency if needed by consumer
-                            onLoopDrawn(path, points.toList()) // Pass a snapshot of points
+                            points.add(startPoint) 
+                            onLoopDrawn(path, points.toList())
                         }
                     }
                 )
@@ -227,8 +227,8 @@ fun FreehandDrawScreen(onLoopDrawn: (Path, List<Offset>) -> Unit) {
     ) {
         drawPath(
             path = path,
-            color = Color.Yellow.copy(alpha = 0.3f), // Semi-transparent fill
-            style = androidx.compose.ui.graphics.drawscope.Fill // Changed to Fill
+            color = Color.Yellow.copy(alpha = 0.3f), 
+            style = androidx.compose.ui.graphics.drawscope.Fill 
         )
         drawPath(
             path = path,
@@ -260,7 +260,6 @@ fun CircleDrawScreen(onCircleDrawn: (center: Offset, radius: Float) -> Unit) {
                     onDrag = { change, _ ->
                         if (isDrawing) {
                             val newRadius = hypot(change.position.x - center.x, change.position.y - center.y)
-                            // Log.d(TAG, "Drag, newRadius: $newRadius") // Can be too verbose
                             radius = newRadius
                         }
                     },
@@ -279,7 +278,7 @@ fun CircleDrawScreen(onCircleDrawn: (center: Offset, radius: Float) -> Unit) {
                 color = Color.Red.copy(alpha = 0.3f),
                 center = center,
                 radius = radius.coerceAtLeast(1.dp.toPx()),
-                style = androidx.compose.ui.graphics.drawscope.Fill // Fill for the area
+                style = androidx.compose.ui.graphics.drawscope.Fill 
             )
             drawCircle(
                 color = Color.Red,
@@ -294,7 +293,7 @@ fun CircleDrawScreen(onCircleDrawn: (center: Offset, radius: Float) -> Unit) {
 @Composable
 fun GeminiResultDialog(result: String, onDismiss: () -> Unit) {
     val TAG = "GeminiResultDialogComposable"
-    Log.d(TAG, "GeminiResultDialog composable executed")
+    Log.d(TAG, "GeminiResultDialog composable executed with result: $result")
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Gemini Result") },
@@ -310,7 +309,7 @@ fun GeminiResultDialog(result: String, onDismiss: () -> Unit) {
 @SuppressLint("ServiceCast")
 private fun captureAndCropScreen(
     mediaProjection: MediaProjection?,
-    composePath: Path, // Renamed for clarity
+    composePath: Path, 
     context: Context
 ): Bitmap? {
     val TAG = "ScreenCircleActivity"
@@ -358,8 +357,8 @@ private fun captureAndCropScreen(
         Log.d(TAG, "Full screen bitmap created from ImageReader for Path capture")
 
         val bounds = RectF()
-        val androidPath = composePath.asAndroidPath() // Convert to Android Path
-        androidPath.computeBounds(bounds, true) // Call on Android Path
+        val androidPath = composePath.asAndroidPath() 
+        androidPath.computeBounds(bounds, true) 
         Log.d(TAG, "Computed bounds for Path: $bounds")
 
         val left = bounds.left.toInt().coerceIn(0, width)
@@ -372,8 +371,8 @@ private fun captureAndCropScreen(
                 fullBitmap,
                 left,
                 top,
-                (right - left).coerceAtLeast(1), // Ensure width is at least 1
-                (bottom - top).coerceAtLeast(1) // Ensure height is at least 1
+                (right - left).coerceAtLeast(1), 
+                (bottom - top).coerceAtLeast(1) 
             )
             Log.d(TAG, "Bitmap cropped for Path capture")
         } else {
@@ -455,8 +454,8 @@ private fun captureAndCropScreen(
                 fullBitmap,
                 left,
                 top,
-                (right - left).coerceAtLeast(1), // Ensure width is at least 1
-                (bottom - top).coerceAtLeast(1)  // Ensure height is at least 1
+                (right - left).coerceAtLeast(1), 
+                (bottom - top).coerceAtLeast(1)  
             )
             Log.d(TAG, "Bitmap cropped for Circle capture")
         } else {

@@ -33,6 +33,13 @@
             </intent-filter>
         </activity>
 
+        <!-- Screen Circle Activity -->
+        <activity
+            android:name=".services.ScreenCircleActivity"
+            android:exported="false"
+            android:theme="@style/Theme.OverLay.Transparent"
+            android:label="Drawing Screen" />
+
         <!-- Overlay Service -->
         <service
             android:name=".services.OverlayService"
