@@ -24,7 +24,7 @@ class GeminiApiClient(private val context: Context) {
 
     private fun getApiKey(): String {
         // TODO: Implement secure API key retrieval (e.g., from EncryptedSharedPreferences or BuildConfig with runtime check)
-        return "YOUR_SECURE_API_KEY" // Replace with secure logic
+        return BuildConfig.API_KEY// Replace with secure logic
     }
 
     suspend fun identifyObjects(bitmap: android.graphics.Bitmap): Result<String> = withContext(Dispatchers.IO) {
