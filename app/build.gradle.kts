@@ -20,6 +20,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Load secrets
     val localProperties=Properties()
     val localPropertiesFile=File(rootDir,"secrets.properties")
     if (localPropertiesFile.exists() && localPropertiesFile.isFile){
@@ -27,6 +28,7 @@ android {
             localProperties.load(it)
         }
     }
+
 
     buildTypes {
         release {
@@ -41,9 +43,13 @@ android {
             buildConfigField("String","API_KEY",localProperties.getProperty("API_KEY"))
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_18
         targetCompatibility = JavaVersion.VERSION_18
+    }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
     }
     kotlin {
         compilerOptions {
@@ -54,18 +60,44 @@ android {
         compose = true
         buildConfig = true
     }
+    packaging {
+        resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
+    }
 }
 
 dependencies {
-
+    // Core AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.activity.ktx)
+
+    // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    // Icons
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.material.icons.extended)
+
+    // ML Kit
+    implementation(libs.play.services.mlkit.text.recognition)
+
+    // Firebase AI / Generative AI (ensure correct aliases in libs.versions.toml)
+
+    implementation(libs.generativeai)
+
+    // Ktor
+    val ktorVersion = "2.3.8"
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,20 +105,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.androidx.material.icons.core) // Or a newer version
-    implementation(libs.material.icons.extended) // For more icons, optional
-    // Core ML Kit for text recognition
-    implementation(libs.play.services.mlkit.text.recognition)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.ui)
-    implementation(libs.material3)
-    implementation(libs.androidx.runtime)
-    // Gemini API dependency (use Firebase AI Logic SDK or custom client)
-    implementation(libs.firebase.ai) // Adjust version as needed
-    // OR use direct Google AI client (if available, check x.ai/api for latest)
-    implementation(libs.generativeai) // Check availability
-    // MediaProjection for screenshot
-    implementation(libs.androidx.media)
+
+    implementation("androidx.security:security-crypto:1.1.0")
+
+
+
 
 }

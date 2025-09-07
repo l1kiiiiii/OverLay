@@ -35,30 +35,41 @@ import kotlinx.coroutines.launch
 
 class AssistantAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        event?.let {
-            if (event.eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
-                val source = event.source ?: return
-                val bounds = Rect()
-                findTextInNode(source, bounds)
+        try {
+            event?.let {
+                if (it.eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+                    val source = it.source ?: return
+                    val bounds = Rect()
+                    findTextInNode(source, bounds)
+                }
             }
+        } catch (e: Exception) {
+            Log.e("AccessibilityService", "Event processing failed: ${e.message}")
         }
     }
 
     private fun findTextInNode(node: AccessibilityNodeInfo, bounds: Rect) {
-        node.getBoundsInScreen(bounds)
-        // Placeholder for circle bounds (sync with CircleDrawScreen)
-        val circleBounds = Rect(100, 100, 300, 300) // Replace with dynamic data
-        if (node.text != null && bounds.intersect(circleBounds)) {
-            Log.d("AccessibilityService", "Found text in circle: ${node.text}")
-            // TODO: Send text to OverlayService or activity
-        }
-        for (i in 0 until node.childCount) {
-            findTextInNode(node.getChild(i) ?: continue, bounds)
+        try {
+            node.getBoundsInScreen(bounds)
+            val circleBounds = Rect(100, 100, 300, 300) // Placeholder, sync with OverlayService
+            if (node.text != null && bounds.intersect(circleBounds)) {
+                Log.d("AccessibilityService", "Found text: ${node.text}")
+            }
+            for (i in 0 until node.childCount) {
+                node.getChild(i)?.let { findTextInNode(it, bounds) } ?: continue
+            }
+        } catch (e: Exception) {
+            Log.e("AccessibilityService", "Node processing failed: ${e.message}")
         }
     }
 
     override fun onInterrupt() {
         Log.d("AccessibilityService", "Service interrupted")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("AccessibilityService", "Service destroyed")
     }
 }
 
