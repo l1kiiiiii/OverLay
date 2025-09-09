@@ -1,15 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
+        tools:ignore="ForegroundServicesPolicy" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" /> <!-- This permission is for dataSync type -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECORD_SCREEN" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OverLay"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        tools:ignore="UnusedAttribute">
 
         <!-- Main launcher activity -->
         <activity
@@ -44,8 +44,7 @@
         <service
             android:name=".services.OverlayService"
             android:exported="false"
-            tools:ignore="MissingClass"
-            android:foregroundServiceType="mediaProjection|dataSync" />
+            android:foregroundServiceType="mediaProjection" /> <!-- Simplified to only mediaProjection -->
 
         <!-- Accessibility Service -->
         <service
@@ -54,14 +53,13 @@
             android:enabled="true"
             android:label="AI Screen Assistant"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            tools:ignore="MissingClass">
+            tools:ignore="AccessibilityPolicy">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
-            <!-- ML Kit OCR dependency -->
             <meta-data
                 android:name="com.google.mlkit.vision.DEPENDENCIES"
                 android:value="ocr" />

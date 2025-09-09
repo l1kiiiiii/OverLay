@@ -78,15 +78,17 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.material)
 
     // Icons
     implementation(libs.androidx.material.icons.core)
     implementation(libs.material.icons.extended)
+    implementation(libs.material.components)
 
     // ML Kit
     implementation(libs.play.services.mlkit.text.recognition)
 
-    // Firebase AI / Generative AI (ensure correct aliases in libs.versions.toml)
+    //  Generative AI (ensure correct aliases in libs.versions.toml)
 
     implementation(libs.generativeai)
 
